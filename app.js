@@ -1,7 +1,7 @@
 const express = require('express');
 const {engine} = require('express-handlebars');
 const bodyParser = require('body-parser');
-//const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const app = express();
 const adminRoutes = require('./routes/admin');
 const path = require('path');
@@ -16,7 +16,12 @@ const path = require('path');
     app.use(bodyParser.json());
 
     // Mongoose
-      // Soon
+      mongoose.Promise = global.Promise;
+      mongoose.connect('mongodb://localhost/blogapp').then(() => {
+        console.log('Connected to mongodb');
+      }).catch((err) => {
+        console.log('Error connecting to mongodb: ' + err);
+      });
 
     // Public
     app.use(express.static(path.join(__dirname, 'public')));    // Routes
