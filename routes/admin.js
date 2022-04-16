@@ -17,16 +17,35 @@ router.get('/categories/add', (req, res) => {
     res.render('admin/addcategories');
 })
 router.post('/categories/new', (req, res) => {
-    const newCategory = {
-        name: req.body.name,
-        slug: req.body.slug
+    var errors = [];
+
+    if(!req.body.name && typeof req.body.name == undefined || req.body.name == null) {
+        errors.push({text: 'Invalid Name'});
     }
 
-    new Category(newCategory).save().then(() => {
-        console.log('Category created');
-    }).catch(err => {
-        console.log("Error saving category: " + err);
-    })
+    if(!req.body.slug && typeof req.body.slug == undefined || req.body.slug == null) {
+        errors.push({text: 'Invalid Slug'});
+    }
+    
+    if(req.body.name.length < 2) {
+        errors.push({text: 'Name must be at least 2 characters'});
+    }
+
+    if(errors.length > 0) {
+        res.render('admin/addcategories', {errors: errors});
+    }else{
+        const newCategory = {
+            name: req.body.name,
+            slug: req.body.slug
+        }
+        new Category(newCategory).save().then(() => {
+            req.flash('success_msg', 'Category added');
+            res.redirect('/admin/categories');
+        }).catch(err => {
+            require.flash('error_msg', 'Error adding category');
+            res.redirect('/admin');
+        })
+    }    
 })
 
 module.exports = router;
