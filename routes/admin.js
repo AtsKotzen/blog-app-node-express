@@ -8,7 +8,10 @@ router.get('/posts', (req, res) => {
     res.send('Posts page');
 })
 router.get('/categories', (req, res) => {
-    res.send('Categories page');
+    res.render('admin/categories');
+})
+router.get('/categories/add', (req, res) => {
+    res.render('admin/addcategories');
 })
 
 module.exports = router;
